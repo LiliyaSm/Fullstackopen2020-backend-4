@@ -9,6 +9,24 @@ const listWithOneBlog = [
     },
 ];
 
+const missingLikesBlog = [
+    {
+        _id: "6a421aa71b54a676234d17f8",
+        title: "No likes title",
+        author: "No likes author",
+        url: "http://www.noLikes.html",
+        __v: 0,
+    },
+];
+
+const missingTitleBlog = [
+    {
+        _id: "6a421aa71b54a676234d17f8",
+        author: "No likes author",
+        __v: 0,
+    },
+];
+
 const empty = [];
 
 const blogs = [
@@ -71,4 +89,6 @@ module.exports = {
     listWithOneBlog,
     empty,
     blogs,
+    missingLikesBlog,
+    missingTitleBlog,
 };

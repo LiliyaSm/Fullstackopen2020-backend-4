@@ -54,6 +54,24 @@ describe("4.8 - 4.12 tests", () => {
         expect(response.body).toHaveLength(testData.blogs.length + 1);
         expect(titles).toContain("Go To Statement Considered Harmful");
     });
+
+    test("verifies that if the likes property is missing from the request, it will default to the value 0", async () => {
+        const newBlog = testData.missingLikesBlog[0];
+
+        const response = await api
+            .post("/api/blogs")
+            .send(newBlog)
+            .expect(201)
+            .expect("Content-Type", /application\/json/);
+
+        expect(response.body.likes).toEqual(0);
+        // const response = await api.get("/api/blogs");
+    });
+
+    test("if title and url properties are missing responds with the status code 400", async () => {
+        const newBlog = testData.missingTitleBlog[0];
+        const response = await api.post("/api/blogs").send(newBlog).expect(404);
+    });
 });
 
 afterAll(() => {
