@@ -3,7 +3,6 @@ const Blog = require("../models/blog");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 
-
 blogsRouter.get("/", async (request, response) => {
     const blogs = await Blog.find({}).populate("user", {
         username: 1,
@@ -22,14 +21,11 @@ blogsRouter.post("/", async (request, response) => {
     const decodedToken = jwt.verify(request.token, process.env.SECRET);
 
     console.log(decodedToken);
-    if (!decodedToken || !decodedToken.id) {
+    if (!request.token || !decodedToken.id) {
         return response.status(401).json({ error: "token missing or invalid" });
     }
     const user = await User.findById(decodedToken.id);
 
-    // const user = await User.findById(request.body.userId);
-    // const user = await User.findById("5f4e662d82c6cd58888387a4");
-    // const users = await User.find({});
     console.log(user);
     if (!request.body.title && !request.body.url) {
         response.status(404).end();
@@ -59,8 +55,23 @@ blogsRouter.post("/", async (request, response) => {
 //     .catch((error) => next(error));
 
 blogsRouter.delete("/:id", async (request, response) => {
-    await Blog.findByIdAndRemove(request.params.id);
-    response.status(204).end();
+    const decodedToken = jwt.verify(request.token, process.env.SECRET);
+
+    console.log(decodedToken);
+    if (!request.token || !decodedToken.id) {
+        return response.status(401).json({ error: "token missing or invalid" });
+    }
+    const userid = decodedToken.id;
+    const blog = await Blog.findById(request.params.id);
+
+    if (blog.user.toString() === userid.toString()) {
+        await Blog.findByIdAndRemove(request.params.id);
+        response.status(204).end();
+    } else {
+        return response.status(401).json({ error: "wrong user" });
+    }
+
+    // await Blog.findByIdAndRemove(request.params.id);
 });
 
 // we need to update only likes
