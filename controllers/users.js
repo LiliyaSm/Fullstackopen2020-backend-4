@@ -5,7 +5,7 @@ const bcrypt = require("bcryptjs");
 usersRouter.post("/", async (request, response) => {
     const body = request.body;
     // check before hashing that password at least 3 characters long
-    if (body.password.length < 3) {
+    if (!body.password || body.password.length < 3) {
         return response
             .status(400)
             .json({
@@ -29,7 +29,13 @@ usersRouter.post("/", async (request, response) => {
 });
 
 usersRouter.get("/", async (request, response) => {
-    const users = await User.find({});
+    //join corresponding blogs to users
+    const users = await User.find({}).populate("blogs", {
+        url: 1,
+        title: 1,
+        author: 1,
+        id:1
+    });
     response.json(users);
 });
 

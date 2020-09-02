@@ -62,7 +62,7 @@ describe("creation invalid users ", () => {
     test(" users without username are not created", async () => {
         usersAtStart = await testData.usersInDb();
         const nonuniqueUsername = {
-            name: "root",
+            name: "emma",
             password: "1111",
         };
         const result = await api
@@ -71,7 +71,7 @@ describe("creation invalid users ", () => {
             .expect(400)
             .expect("Content-Type", /application\/json/);
 
-        // expect(result.body.error).toContain("`username` to be unique");
+        expect(result.body.error).toContain("Path `username` is required");
 
         const usersAtEnd = await testData.usersInDb();
         expect(usersAtEnd).toHaveLength(usersAtStart.length);

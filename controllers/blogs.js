@@ -1,8 +1,13 @@
 const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
+const User = require("../models/user");
 
 blogsRouter.get("/", async (request, response) => {
-    const blogs = await Blog.find({});
+    const blogs = await Blog.find({}).populate("user", {
+        username: 1,
+        name: 1,
+        id: 1,
+    });
     response.json(blogs);
 });
 
@@ -11,14 +16,27 @@ blogsRouter.get("/", async (request, response) => {
 // });
 
 blogsRouter.post("/", async (request, response) => {
-    request.body.likes = request.body.likes ?? 0;
-
+    
+    // const user = await User.findById(request.body.userId);
+    // const user = await User.findById("5f4e662d82c6cd58888387a4");
+    const users = await User.find({});
+    const user = users[0]
+    console.log(user)
     if (!request.body.title && !request.body.url) {
         response.status(404).end();
     } else {
-        const blog = await new Blog(request.body).save();
-
-        response.status(201).json(blog);
+        const blog = new Blog({
+            title: request.body.title,
+            //if likes field is empty set it to 0
+            likes: request.body.likes ?? 0,
+            author: request.body.author,
+            url: request.body.url,
+            user: user._id,
+        });
+        const savedBlog = await blog.save();
+        user.blogs = user.blogs.concat(savedBlog._id);
+        await user.save()
+        response.status(201).json(savedBlog);
     }
 
     // exceptions are automatically passed to the error handling middleware "express-async-error"
