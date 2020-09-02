@@ -1,8 +1,20 @@
 const mongoose = require("mongoose");
+const uniqueValidator = require("mongoose-unique-validator");
+
+
+// fix deprecation warnings
+mongoose.set('useCreateIndex', true)
 
 const userSchema = new mongoose.Schema({
-    username: String,
-    name: String,
+    username: {
+        type: String,
+        required: true,
+        minlength: 3,
+        unique: true,
+    },
+    name: {
+        type: String,
+    },
     passwordHash: String,
     blogs: [
         {
@@ -24,4 +36,5 @@ userSchema.set("toJSON", {
 
 const User = mongoose.model("User", userSchema);
 
+userSchema.plugin(uniqueValidator);
 module.exports = User;
