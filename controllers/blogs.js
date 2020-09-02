@@ -1,6 +1,16 @@
 const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
 const User = require("../models/user");
+const jwt = require("jsonwebtoken");
+
+//  isolates the token from the authorization header
+const getTokenFrom = (request) => {
+    const authorization = request.get("authorization");
+    if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
+        return authorization.substring(7);
+    }
+    return null;
+};
 
 blogsRouter.get("/", async (request, response) => {
     const blogs = await Blog.find({}).populate("user", {
@@ -16,12 +26,19 @@ blogsRouter.get("/", async (request, response) => {
 // });
 
 blogsRouter.post("/", async (request, response) => {
-    
+    //to create blog user request need to contain authorization token
+    const token = getTokenFrom(request);
+    const decodedToken = jwt.verify(token, process.env.SECRET);
+    console.log(decodedToken);
+    if (!token || !decodedToken.id) {
+        return response.status(401).json({ error: "token missing or invalid" });
+    }
+    const user = await User.findById(decodedToken.id);
+
     // const user = await User.findById(request.body.userId);
     // const user = await User.findById("5f4e662d82c6cd58888387a4");
-    const users = await User.find({});
-    const user = users[0]
-    console.log(user)
+    // const users = await User.find({});
+    console.log(user);
     if (!request.body.title && !request.body.url) {
         response.status(404).end();
     } else {
@@ -35,7 +52,7 @@ blogsRouter.post("/", async (request, response) => {
         });
         const savedBlog = await blog.save();
         user.blogs = user.blogs.concat(savedBlog._id);
-        await user.save()
+        await user.save();
         response.status(201).json(savedBlog);
     }
 
