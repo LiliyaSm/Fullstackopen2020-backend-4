@@ -24,8 +24,21 @@ const errorHandler = (error, request, response, next) => {
     next(error);
 };
 
+const getTokenFrom = (request, response, next) => {
+    // take the token from the Authorization header and place it to the token field of the request object
+    const authorization = request.get("authorization");
+    if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
+        request.token = authorization.substring(7);
+    }
+    next();
+
+};
+
+
+
 module.exports = {
     requestLogger,
     unknownEndpoint,
     errorHandler,
+    getTokenFrom,
 };
