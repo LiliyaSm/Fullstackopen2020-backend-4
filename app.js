@@ -8,7 +8,7 @@ const middleware = require("./utils/middleware");
 const logger = require("./utils/logger");
 const config = require("./utils/config");
 const usersRouter = require("./controllers/users");
-const morgan = require('morgan')
+const morgan = require("morgan");
 const loginRouter = require("./controllers/login");
 
 logger.info("connecting to", config.MONGODB_URI);
@@ -25,8 +25,7 @@ mongoose
         logger.error("error connection to MongoDB:", error.message);
     });
 
-    
-app.use(morgan("tiny"))
+app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
 
@@ -38,6 +37,5 @@ app.use("/api/login", loginRouter);
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
-
 
 module.exports = app;

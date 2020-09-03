@@ -12,6 +12,7 @@ blogsRouter.get("/", async (request, response) => {
     response.json(blogs);
 });
 
+// before refact
 // Blog.find({}).then((blogs) => {
 //     response.json(blogs);
 // });
@@ -20,13 +21,11 @@ blogsRouter.post("/", async (request, response) => {
     //to create blog user request need to contain authorization token
     const decodedToken = jwt.verify(request.token, process.env.SECRET);
 
-    console.log(decodedToken);
     if (!request.token || !decodedToken.id) {
         return response.status(401).json({ error: "token missing or invalid" });
     }
     const user = await User.findById(decodedToken.id);
 
-    console.log(user);
     if (!request.body.title && !request.body.url) {
         response.status(404).end();
     } else {
@@ -62,16 +61,19 @@ blogsRouter.delete("/:id", async (request, response) => {
         return response.status(401).json({ error: "token missing or invalid" });
     }
     const userid = decodedToken.id;
+    const user = await User.findById(userid);
     const blog = await Blog.findById(request.params.id);
+    console.log(userid, blog.user);
 
     if (blog.user.toString() === userid.toString()) {
+        // delete id from user.blogs array
+        await user.blogs.pull({ _id: request.params.id });
+        await user.save();
         await Blog.findByIdAndRemove(request.params.id);
         response.status(204).end();
     } else {
         return response.status(401).json({ error: "wrong user" });
     }
-
-    // await Blog.findByIdAndRemove(request.params.id);
 });
 
 // we need to update only likes

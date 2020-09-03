@@ -6,8 +6,8 @@ describe("blog has most likes", () => {
     test("when list has only one blog, return it", () => {
         const result = listHelper.favoriteBlog(testData.listWithOneBlog);
         expect(result).toEqual({
-            title: "Go To Statement Considered Harmful",
-            author: "Edsger W. Dijkstra",
+            title: "New blog",
+            author: "New author",
             likes: 5,
         });
     });

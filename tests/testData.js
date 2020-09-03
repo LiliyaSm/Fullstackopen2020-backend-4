@@ -48,6 +48,7 @@ const blogs = [
         title: "React patterns",
         author: "Michael Chan",
         url: "https://reactpatterns.com/",
+        user: "5f4f6bcd0b20705a3cc54dd4",
         likes: 7,
         __v: 0,
     },
@@ -95,8 +96,6 @@ const blogs = [
         __v: 0,
     },
 ];
-
-
 
 module.exports = {
     listWithOneBlog,
