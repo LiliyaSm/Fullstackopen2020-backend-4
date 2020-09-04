@@ -2,10 +2,10 @@
 
 ### Node/Express backend of Blog list App
 
-Users can handle their blog posts: get posts, create new posts, after authentication delete them and update.
+Users can handle their blog posts: get posts,after authentication create new posts, update and delete them.
 
-**Authentication**: app uses JSON Web Token and password hashing.
+**Authentication**: Implemented using JSON Web Token and password hashing.
 
 **Database**: App uses MongoDB and Mongoose for object modeling. Base has two collections: Users and Blogs with reference to each other.
 
-**Testing**: Unit and Integration testing with using Jest and development environment.
+**Testing**: Unit and Integration testing uses Jest and development environment.
